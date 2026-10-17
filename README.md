@@ -75,6 +75,8 @@ Treść jest zawsze escapowana, więc wklejony HTML nie wykona się na stronie.
 
 - Kategorie i grupy wiekowe: `src/lib/constants.ts`
 - Kolory i typografia: zmienne na początku `src/app/globals.css`
+- Zdjęcia na stronie głównej: `PHOTOS` w `src/lib/constants.ts`. Pliki leżą w `public/images/` (baner `hero.jpg` 2400×1200, sekcja „Kim jesteśmy” `kim-jestesmy.jpg` 1600×1200). Żeby podmienić, nadpisz plik o tej samej nazwie. Zdjęcie w pasie z Instagramem jest z Unsplash; po podmianie na własne usuń z niego pola `credit` i `page`.
+- Opisy kategorii w pasie „O czym piszemy”: `CATEGORY_INFO` w `src/lib/constants.ts`
 - Logo: `src/components/Logo.tsx` (uproszczony SVG — możesz podmienić na swój plik z Canvy, np. `public/logo.svg`)
 
 ## Struktura
