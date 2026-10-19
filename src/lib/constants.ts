@@ -2,11 +2,11 @@ import { slugify } from "./utils";
 
 export const SITE = {
   name: "Bezpieczne Dzieci w Sieci",
-  handle: "@bezpiecznedzieciwsieci",
+  handle: "@bezpieczne_dzieci_w_sieci",
   tagline: "Cyfrowy świat Twojego dziecka, wytłumaczony po ludzku.",
   audience: "Blog dla rodziców, szkół i opiekunów",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  instagram: "https://www.instagram.com/bezpiecznedzieciwsieci/",
+  instagram: "https://www.instagram.com/bezpieczne_dzieci_w_sieci/",
 };
 
 /**
