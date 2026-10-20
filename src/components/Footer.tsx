@@ -12,7 +12,11 @@ export function Footer() {
         <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>
           {SITE.handle}
         </a>
-        <Link href="/admin" style={{ color: "inherit" }}>Logowanie</Link>
+        <nav className="footer-links" aria-label="Informacje">
+          <Link href="/kontakt">Kontakt</Link>
+          <Link href="/polityka-prywatnosci">Polityka prywatności</Link>
+          <Link href="/admin">Logowanie</Link>
+        </nav>
       </div>
       {credits.length > 0 && (
         <div className="wrap credits">

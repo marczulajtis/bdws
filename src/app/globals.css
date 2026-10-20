@@ -169,6 +169,18 @@ h3 {
   text-transform: uppercase;
 }
 
+.site-footer .footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.site-footer .footer-links a {
+  color: inherit;
+}
+.site-footer .footer-links a:hover {
+  color: var(--teal);
+}
+
 .site-footer .credits {
   display: block;
   padding-block: 0 20px;

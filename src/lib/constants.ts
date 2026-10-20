@@ -10,6 +10,17 @@ export const SITE = {
 };
 
 /**
+ * Dane do stron /kontakt i /polityka-prywatnosci.
+ * UZUPEŁNIJ przed wdrożeniem: RODO wymaga, żeby w polityce prywatności było imię i nazwisko
+ * (albo nazwa firmy) administratora danych. Puste pole = zdanie zastępcze na stronie.
+ */
+export const CONTACT = {
+  email: "kontakt@bezpiecznedzieciwsieci.pl",
+  owner: "", // np. "Marta i Jan Kowalscy" albo nazwa działalności z adresem
+  policyUpdated: "19 października 2026",
+};
+
+/**
  * Zdjęcia na stronie głównej — darmowe z Unsplash (licencja Unsplash, także do użytku komercyjnego).
  * Żeby użyć własnych: wrzuć plik do /public (np. public/hero.jpg) i wpisz src: "/hero.jpg".
  */

@@ -24,7 +24,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       title: post.title,
       description: post.excerpt,
       publishedTime: post.published_at ?? undefined,
-      images: post.cover_url ? [post.cover_url] : undefined,
     },
   };
 }
