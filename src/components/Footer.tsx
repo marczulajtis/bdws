@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/lib/constants";
+import { CookieSettingsLink } from "@/components/CookieSettingsLink";
 
 export function Footer() {
   return (
@@ -15,8 +16,10 @@ export function Footer() {
           {SITE.handle}
         </a>
         <nav className="footer-links" aria-label="Informacje">
+          <Link href="/dla-szkol">Dla szkół</Link>
           <Link href="/kontakt">Kontakt</Link>
           <Link href="/polityka-prywatnosci">Polityka prywatności</Link>
+          <CookieSettingsLink />
           <Link href="/admin">Logowanie</Link>
         </nav>
       </div>

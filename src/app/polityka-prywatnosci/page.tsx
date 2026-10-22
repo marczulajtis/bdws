@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CONTACT, SITE } from "@/lib/constants";
+import { CookieSettingsLink } from "@/components/CookieSettingsLink";
 
 export const metadata: Metadata = {
   title: "Polityka prywatności",
-  description: "Jakie dane zbiera blog Bezpieczne Dzieci w Sieci, po co i jak długo je przechowujemy. Bez ciasteczek śledzących.",
+  description: "Jakie dane zbiera blog Bezpieczne Dzieci w Sieci, po co i jak długo je przechowujemy. Pliki cookie, zgoda na statystyki i zapisy na powiadomienia dla szkół.",
   alternates: { canonical: "/polityka-prywatnosci" },
 };
 
@@ -17,8 +18,9 @@ export default function PrivacyPage() {
       <div className="article">
         <h1>Polityka prywatności</h1>
         <p className="lead">
-          W skrócie: nie mamy ciasteczek śledzących, reklam ani newslettera. Nie wiemy, kim jesteś, i nie próbujemy
-          się tego dowiedzieć.
+          W skrócie: nie mamy reklam ani ciasteczek śledzących. Statystyki odwiedzin włączamy tylko za Twoją zgodą.
+          Twój adres e-mail mamy tylko wtedy, gdy sam zapiszesz się na powiadomienia o materiałach dla szkół albo do
+          nas napiszesz.
         </p>
         <div className="prose">
           <h2>Kto odpowiada za Twoje dane</h2>
@@ -28,31 +30,45 @@ export default function PrivacyPage() {
             sprawach dotyczących danych napisz do nas: {mail}.
           </p>
 
-          <h2>Ciasteczka (cookies)</h2>
+          <h2 id="cookies">Pliki cookie i podobne technologie</h2>
           <p>
-            Czytelnikom bloga nie zapisujemy żadnych ciasteczek. Dlatego nie zobaczysz u nas okienka ze zgodą na
-            cookies.
+            Przy pierwszej wizycie pytamy o zgodę w okienku na dole strony. Możesz zaakceptować wszystko, odrzucić
+            wszystko albo wybrać kategorie. Domyślnie nic poza niezbędnymi elementami nie jest włączone. Swój wybór
+            zmienisz lub wycofasz w każdej chwili: przyciskiem z ciasteczkiem w lewym dolnym rogu, linkiem „Ustawienia
+            cookies” w stopce albo tutaj: <CookieSettingsLink className="btn btn-line" />. Wycofanie zgody nie wpływa na
+            zgodność z prawem tego, co działo się przed nim. O zgodę zapytamy ponownie po 6 miesiącach albo gdy zmienimy
+            używane narzędzia.
           </p>
-          <p>
-            Wyjątek to panel redakcji (<code>/admin</code>). Po zalogowaniu przeglądarka redaktora dostaje ciasteczko
-            sesji, bez którego logowanie nie działa. Czytelników to nie dotyczy.
-          </p>
+          <ul>
+            <li>
+              <strong>Niezbędne (zawsze aktywne).</strong> W pamięci przeglądarki (localStorage, klucz{" "}
+              <code>bdws-consent</code>) zapisujemy Twój wybór i datę decyzji, żeby nie pytać przy każdej wizycie.
+              Przechowujemy go do 6 miesięcy albo do wyczyszczenia danych przeglądarki. W panelu redakcji (
+              <code>/admin</code>) po zalogowaniu przeglądarka redaktora dostaje ciasteczko sesji Supabase, bez którego
+              logowanie nie działa. Czytelników to nie dotyczy. Podstawa: art. 399 ust. 3 Prawa komunikacji
+              elektronicznej (niezbędność do świadczenia usługi).
+            </li>
+            <li>
+              <strong>Statystyki (tylko za zgodą).</strong> Vercel Web Analytics, opisane niżej. Skrypt ładuje się
+              dopiero po zaznaczeniu tej kategorii albo kliknięciu „Akceptuję wszystkie”.
+            </li>
+          </ul>
+          <p>Nie używamy ciasteczek reklamowych, marketingowych ani pikseli mediów społecznościowych.</p>
 
           <h2>Statystyki odwiedzin</h2>
           <p>
-            Korzystamy z Vercel Web Analytics, żeby wiedzieć, które wpisy są czytane i skąd przychodzą czytelnicy. To
-            narzędzie nie używa ciasteczek i nie tworzy profili użytkowników. Widzimy tylko zbiorcze liczby: odsłony,
-            odwiedzane strony, kraj, rodzaj urządzenia i przeglądarki oraz stronę, z której przyszedł czytelnik.
-            Odwiedzający są rozróżniani przez skrót generowany z danych zapytania, który zmienia się codziennie, więc nie
-            da się na jego podstawie rozpoznać Cię następnego dnia.
+            Jeśli się zgodzisz, korzystamy z Vercel Web Analytics, żeby wiedzieć, które wpisy są czytane i skąd
+            przychodzą czytelnicy. To narzędzie nie zapisuje ciasteczek i nie tworzy profili użytkowników. Widzimy tylko
+            zbiorcze liczby: odsłony, odwiedzane strony, kraj, rodzaj urządzenia i przeglądarki oraz stronę, z której
+            przyszedł czytelnik. Odwiedzający są rozróżniani przez skrót generowany z danych zapytania, który zmienia się
+            codziennie, więc nie da się na jego podstawie rozpoznać Cię następnego dnia.
           </p>
-          <p>
-            Podstawa prawna: nasz prawnie uzasadniony interes, czyli rozwój bloga (art. 6 ust. 1 lit. f RODO).
-          </p>
+          <p>Podstawa prawna: Twoja zgoda (art. 6 ust. 1 lit. a RODO i art. 399 ust. 1 Prawa komunikacji elektronicznej).</p>
 
           <h2>Hosting i logi serwera</h2>
           <p>
-            Strona działa na serwerach Vercel Inc., a wpisy są przechowywane w bazie Supabase. Jak każdy serwer
+            Strona działa na serwerach Vercel Inc., a wpisy i lista zapisów na powiadomienia są przechowywane w bazie
+            Supabase. Jak każdy serwer
             internetowy, Vercel technicznie przetwarza adres IP i informacje o przeglądarce, żeby w ogóle wyświetlić
             stronę, a krótkotrwale zapisuje je w logach w celach bezpieczeństwa. Nie używamy tych danych do
             identyfikowania czytelników.
@@ -65,17 +81,54 @@ export default function PrivacyPage() {
 
           <h2>Treści z innych serwisów</h2>
           <p>
-            Część elementów strony ładuje się z zewnętrznych serwerów: czcionki z Google Fonts, a niektóre zdjęcia
-            z Unsplash. Twoja przeglądarka łączy się wtedy z tymi serwisami i przekazuje im swój adres IP. Szczegóły
-            znajdziesz w politykach{" "}
-            <a href="https://policies.google.com/privacy?hl=pl" {...ext}>Google</a> i{" "}
-            <a href="https://unsplash.com/privacy" {...ext}>Unsplash</a>.
+            Czcionki i zdjęcia serwujemy z naszej domeny, więc Twoja przeglądarka nie łączy się przy tym z Google
+            Fonts ani innymi serwisami.
           </p>
           <p>
             Link do naszego Instagrama to zwykły odnośnik, a nie wtyczka. Meta dowiaduje się o Tobie dopiero wtedy, gdy
             w niego klikniesz. Na Instagramie obowiązuje{" "}
             <a href="https://privacycenter.instagram.com/policy" {...ext}>polityka prywatności Instagrama</a>.
           </p>
+
+          <h2 id="zapisy">Zapisy na powiadomienia o materiałach dla szkół</h2>
+          <p>
+            Na stronie <Link href="/dla-szkol">Dla szkół</Link> możesz zostawić adres e-mail, żebyśmy dali znać, gdy
+            przygotowywane przez nas materiały pomocowe i szkoleniowe dla szkół i placówek oświatowych będą gotowe.
+          </p>
+          <ul>
+            <li>
+              <strong>Jakie dane:</strong> adres e-mail, opcjonalnie informacja, kim jesteś (np. nauczyciel, pedagog,
+              rodzic), treść zgody, którą zaznaczyłeś, data zapisu i data potwierdzenia. Nie pytamy o imię, nazwisko
+              ani nazwę szkoły.
+            </li>
+            <li>
+              <strong>Po co:</strong> żeby wysłać Ci link do potwierdzenia zapisu, krótkie potwierdzenie, że jesteś na
+              liście, a potem informacje o gotowych materiałach i szkoleniach oraz ważne zmiany na ich temat. Nie
+              wysyłamy reklam innych firm i nikomu nie sprzedajemy ani nie udostępniamy listy.
+            </li>
+            <li>
+              <strong>Podstawa prawna:</strong> Twoja zgoda (art. 6 ust. 1 lit. a RODO oraz art. 398 Prawa komunikacji
+              elektronicznej). Zapis jest dobrowolny. Zgodę możesz wycofać w każdej chwili, bez podawania powodu.
+            </li>
+            <li>
+              <strong>Potwierdzenie zapisu:</strong> po wysłaniu formularza dostajesz e-mail z linkiem. Dopóki go nie
+              klikniesz, nie wyślemy nic więcej. Niepotwierdzone adresy usuwamy po 30 dniach.
+            </li>
+            <li>
+              <strong>Jak długo:</strong> do chwili, gdy się wypiszesz. W każdej wiadomości jest link „Wypisz się”. Po
+              kliknięciu usuwamy Twój adres z listy od razu. Możesz też napisać na {mail}.
+            </li>
+            <li>
+              <strong>Kto technicznie przetwarza dane:</strong> listę przechowujemy w bazie Supabase (Supabase Inc.), a
+              wiadomości wysyłamy przez Resend (Resend, Inc., USA). Obie firmy działają na nasze zlecenie, na podstawie
+              umów powierzenia. Jeśli dane trafiają poza Europejski Obszar Gospodarczy, chronią je standardowe klauzule
+              umowne zatwierdzone przez Komisję Europejską.
+            </li>
+            <li>
+              <strong>Bez śledzenia:</strong> nie sprawdzamy, czy otwierasz nasze wiadomości ani w co klikasz, i nie
+              tworzymy profili odbiorców.
+            </li>
+          </ul>
 
           <h2>Gdy do nas piszesz</h2>
           <p>
@@ -94,6 +147,7 @@ export default function PrivacyPage() {
             <li>poprawić je albo poprosić o ich usunięcie,</li>
             <li>ograniczyć ich przetwarzanie,</li>
             <li>sprzeciwić się przetwarzaniu opartemu na naszym prawnie uzasadnionym interesie,</li>
+            <li>wycofać zgodę w dowolnym momencie (np. wypisać się z powiadomień dla szkół),</li>
             <li>
               złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa,{" "}
               <a href="https://uodo.gov.pl" {...ext}>uodo.gov.pl</a>).

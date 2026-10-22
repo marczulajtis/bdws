@@ -7,6 +7,8 @@ export function AdminBar({ email }: { email?: string }) {
       <h1>Panel admina</h1>
       <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
         {email && <span className="hint">{email}</span>}
+        <Link href="/admin" className="btn btn-ghost">Wpisy</Link>
+        <Link href="/admin/zapisy" className="btn btn-ghost">Zapisy (szkoły)</Link>
         <Link href="/" className="btn btn-ghost">Zobacz bloga</Link>
         <form action={logout}>
           <button className="btn btn-line" type="submit">Wyloguj</button>

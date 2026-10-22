@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
+import { Lexend, Unbounded } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { CookieConsent } from "@/components/CookieConsent";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
+
+// Czcionki serwowane z naszej domeny (next/font pobiera je przy budowaniu),
+// więc przeglądarka czytelnika nie łączy się z Google Fonts.
+const display = Unbounded({ subsets: ["latin", "latin-ext"], weight: ["600", "800"], variable: "--font-display", display: "swap" });
+const body = Lexend({ subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"], variable: "--font-body", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -18,25 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Lexend:wght@300;400;500;600&display=swap"
-        />
-      </head>
+    <html lang="pl" className={`${display.variable} ${body.variable}`}>
       <body>
         <Header />
         <main>{children}</main>
         <Footer />
-        <Analytics />
+        <CookieConsent />
       </body>
     </html>
   );

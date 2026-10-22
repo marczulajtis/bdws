@@ -147,12 +147,15 @@ export default async function Home({ searchParams }: { searchParams: SP }) {
       <section className="band band-teal">
         <div className="wrap schools">
           <div>
-            <span className="eyebrow">Dla szkół i nauczycieli</span>
-            <h2>Przygotowujemy materiały dla szkół</h2>
-            <p>Ebook i szkolenia dla nauczycieli, wychowawców i rodziców. Już teraz znajdziesz wpisy dla szkół na blogu.</p>
+            <span className="eyebrow">Dla szkół i placówek oświatowych</span>
+            <h2>Pracujemy nad materiałami dla szkół</h2>
+            <p>
+              Przygotowujemy materiały pomocowe i szkoleniowe dla nauczycieli, wychowawców i pedagogów. Zostaw e-mail,
+              a damy znać, gdy będą gotowe.
+            </p>
           </div>
-          <Link href={chipHref("dla-szkol")} className="btn btn-white">
-            Wpisy dla szkół <span className="arr" />
+          <Link href="/dla-szkol#zapis" className="btn btn-white">
+            Powiadom mnie <span className="arr" />
           </Link>
         </div>
       </section>

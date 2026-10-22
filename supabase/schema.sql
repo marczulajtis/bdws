@@ -76,3 +76,6 @@ create policy "redakcja wgrywa okładki" on storage.objects
 drop policy if exists "redakcja usuwa okładki" on storage.objects;
 create policy "redakcja usuwa okładki" on storage.objects
   for delete to authenticated using (bucket_id = 'covers' and public.is_admin());
+
+-- ---------- lista zapisów „Materiały dla szkół” ----------
+-- Tabele subscribers i mailings są w osobnym pliku: supabase/zapisy.sql (uruchom go po tym pliku).

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useMemo, useRef, useState } from "react";
 import { AGES, CATEGORIES } from "@/lib/constants";
-import { renderMarkdown } from "@/lib/markdown";
+import { PLACEHOLDER_LINE, countPlaceholders, renderMarkdown } from "@/lib/markdown";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
 import { readingMinutes, slugify } from "@/lib/utils";
@@ -33,10 +33,105 @@ export function Editor({ post }: { post: Post | null }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [imgBusy, setImgBusy] = useState("");
+  const [imgError, setImgError] = useState("");
   const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
+  const galleryInput = useRef<HTMLInputElement>(null);
 
   const isPublished = post?.status === "published";
-  const preview = useMemo(() => renderMarkdown(body), [body]);
+  const preview = useMemo(() => renderMarkdown(body, { preview: true }), [body]);
+  const slotsLeft = useMemo(() => countPlaceholders(body), [body]);
+
+  /** Wysyła obraz do Supabase Storage (bucket „covers”, folder „wpisy”) i zwraca publiczny adres. */
+  async function uploadImage(file: File, folder: string): Promise<string> {
+    const prepared = await shrinkImage(file);
+    if (prepared.size > 5 * 1024 * 1024) throw new Error("too-big");
+    const supabase = createClient();
+    const ext = prepared.type === "image/webp" ? "webp" : file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const base = slugify(file.name.replace(/\.[^.]+$/, "")).slice(0, 40);
+    const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${base}.${ext}`;
+    const { error } = await supabase.storage.from("covers").upload(path, prepared, { contentType: prepared.type || file.type });
+    if (error) throw error;
+    return supabase.storage.from("covers").getPublicUrl(path).data.publicUrl;
+  }
+
+  /**
+   * Wstawia zdjęcie albo galerię w linijce z kursorem.
+   * Jeśli kursor stoi na miejscu na zrzut ([ZRZUT 3: opis]), to miejsce zostaje zastąpione,
+   * a opis z niego staje się podpisem zdjęcia.
+   */
+  async function insertImages(files: File[], gallery: boolean) {
+    const ta = bodyRef.current;
+    if (!ta || !files.length) return;
+    setImgError("");
+    const caret = ta.selectionStart;
+    const value = ta.value;
+    const lineStart = value.lastIndexOf("\n", caret - 1) + 1;
+    const nl = value.indexOf("\n", caret);
+    const lineEnd = nl === -1 ? value.length : nl;
+    const line = value.slice(lineStart, lineEnd);
+    const slot = line.match(PLACEHOLDER_LINE);
+    // podpis = opis miejsca bez dopisku w nawiasie na końcu (tam są wskazówki dla redakcji)
+    const caption = slot ? slot[2].replace(/\s*\([^)]*\)\s*$/, "").replace(/[\]\[]/g, "").trim() : "";
+
+    setImgBusy(files.length > 1 ? `Wysyłanie 0/${files.length}…` : "Wysyłanie…");
+    const urls: string[] = [];
+    try {
+      for (const f of files) {
+        urls.push(await uploadImage(f, `wpisy/${slugify(slug || title || "wpis")}`));
+        if (files.length > 1) setImgBusy(`Wysyłanie ${urls.length}/${files.length}…`);
+      }
+    } catch (e) {
+      setImgError(
+        e instanceof Error && e.message === "too-big"
+          ? "Zdjęcie jest za duże. Maksymalnie 5 MB."
+          : "Nie udało się wysłać zdjęcia. Sprawdź połączenie i bucket „covers” (README)."
+      );
+      setImgBusy("");
+      if (!urls.length) return;
+    }
+    setImgBusy("");
+
+    const md =
+      gallery || urls.length > 1
+        ? [":::galeria", ...urls.map((u, n) => `![${n === 0 ? caption : ""}](${u})`), ":::"].join("\n")
+        : `![${caption}](${urls[0]})`;
+
+    let next: string;
+    let pos: number;
+    if (slot) {
+      next = value.slice(0, lineStart) + md + value.slice(lineEnd);
+      pos = lineStart + md.length;
+    } else {
+      const before = value.slice(0, lineEnd);
+      const after = value.slice(lineEnd);
+      const pre = before.trim() ? "\n\n" : "";
+      next = before + pre + md + "\n" + after;
+      pos = before.length + pre.length + md.length;
+    }
+    setBody(next);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(pos, pos);
+    });
+  }
+
+  /** Zaznacza następne miejsce na zrzut w treści, żeby od razu wstawić tam zdjęcie. */
+  function nextSlot() {
+    const ta = bodyRef.current;
+    if (!ta) return;
+    const lines = ta.value.split("\n");
+    const from = ta.value.slice(0, ta.selectionEnd).split("\n").length; // numer linijki po kursorze
+    const order = [...lines.keys()].slice(from).concat([...lines.keys()].slice(0, from));
+    const idx = order.find((n) => PLACEHOLDER_LINE.test(lines[n]));
+    if (idx === undefined) return;
+    const start = lines.slice(0, idx).join("\n").length + (idx ? 1 : 0);
+    ta.focus();
+    ta.setSelectionRange(start, start + lines[idx].length);
+    const lh = parseFloat(getComputedStyle(ta).lineHeight) || 22;
+    ta.scrollTop = Math.max(0, idx * lh - ta.clientHeight / 3);
+  }
 
   function applyTool(t: (typeof TOOLS)[number]) {
     const ta = bodyRef.current;
@@ -160,10 +255,52 @@ export function Editor({ post }: { post: Post | null }) {
             {TOOLS.map((t) => (
               <button type="button" key={t.label} onClick={() => applyTool(t)}>{t.label}</button>
             ))}
+            <button type="button" className="tool-img" disabled={Boolean(imgBusy)} onClick={() => imageInput.current?.click()}>
+              Zdjęcie
+            </button>
+            <button type="button" className="tool-img" disabled={Boolean(imgBusy)} onClick={() => galleryInput.current?.click()}>
+              Galeria
+            </button>
+            <input ref={imageInput} type="file" accept="image/*" hidden
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) insertImages([f], false); e.target.value = ""; }} />
+            <input ref={galleryInput} type="file" accept="image/*" multiple hidden
+              onChange={(e) => { const fs = Array.from(e.target.files ?? []); if (fs.length) insertImages(fs, true); e.target.value = ""; }} />
           </div>
+          {(imgBusy || slotsLeft > 0) && (
+            <div className="slots">
+              {imgBusy ? (
+                <span>{imgBusy}</span>
+              ) : (
+                <>
+                  <span>Miejsca na zrzuty do uzupełnienia: <b>{slotsLeft}</b></span>
+                  <button type="button" className="btn btn-ghost" onClick={nextSlot}>Przejdź do następnego</button>
+                </>
+              )}
+            </div>
+          )}
+          {imgError && <p className="error">{imgError}</p>}
           <textarea id="body" name="body" ref={bodyRef} className="body-input" value={body}
             onChange={(e) => setBody(e.target.value)}
+            onPaste={(e) => {
+              // zrzut ekranu wklejony ze schowka (Cmd+V) trafia od razu do linijki z kursorem
+              const fs = Array.from(e.clipboardData.files).filter((f) => f.type.startsWith("image/"));
+              if (!fs.length || imgBusy) return;
+              e.preventDefault();
+              insertImages(fs, fs.length > 1);
+            }}
+            onDragOver={(e) => { if (e.dataTransfer.types.includes("Files")) e.preventDefault(); }}
+            onDrop={(e) => {
+              const fs = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
+              if (!fs.length || imgBusy) return;
+              e.preventDefault();
+              insertImages(fs, fs.length > 1);
+            }}
             placeholder={"Pisz zwykłym tekstem.\n## Nagłówek\n- punkt listy\n!! wskazówka dla rodzica"} />
+          <p className="hint">
+            Zdjęcie trafia do linijki z kursorem. Możesz też wkleić zrzut ze schowka (Cmd+V) albo przeciągnąć pliki na pole
+            treści. Podpis wpisz w nawiasie: ![podpis](adres). „Galeria” pozwala wybrać kilka zdjęć naraz i ustawia je
+            obok siebie. Linijki [ZRZUT …] to miejsca na zrzuty: czytelnicy ich nie widzą.
+          </p>
         </div>
 
         <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 14 }}>
@@ -174,7 +311,7 @@ export function Editor({ post }: { post: Post | null }) {
         {state.error && <p className="error" role="alert">{state.error}</p>}
 
         <div className="actions">
-          <button className="btn btn-teal" type="submit" name="intent" value="publish" disabled={pending || uploading}>
+          <button className="btn btn-teal" type="submit" name="intent" value="publish" disabled={pending || uploading || Boolean(imgBusy)}>
             {isPublished ? "Zapisz zmiany" : "Opublikuj"} <span className="arr" />
           </button>
           {isPublished ? (
@@ -212,4 +349,26 @@ export function Editor({ post }: { post: Post | null }) {
       </div>
     </div>
   );
+}
+
+/**
+ * Zmniejsza duże zdjęcia przed wysłaniem (dłuższy bok maks. 1600 px, WebP).
+ * Zrzuty z telefonu ważą wtedy zwykle 100–300 KB zamiast kilku MB. GIF-y i SVG zostają bez zmian.
+ */
+async function shrinkImage(file: File): Promise<File | Blob> {
+  if (!/^image\/(jpeg|png|webp|heic|heif)$/.test(file.type)) return file;
+  try {
+    const bmp = await createImageBitmap(file);
+    const max = 1600;
+    const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    if (scale === 1 && file.size < 600 * 1024) return file;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bmp.width * scale);
+    canvas.height = Math.round(bmp.height * scale);
+    canvas.getContext("2d")!.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/webp", 0.86));
+    return blob && blob.type === "image/webp" && blob.size < file.size ? blob : file;
+  } catch {
+    return file;
+  }
 }

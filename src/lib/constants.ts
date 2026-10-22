@@ -17,7 +17,7 @@ export const SITE = {
 export const CONTACT = {
   email: "kontakt@bezpiecznedzieciwsieci.pl",
   owner: "", // np. "Marta i Jan Kowalscy" albo nazwa działalności z adresem
-  policyUpdated: "19 października 2026",
+  policyUpdated: "22 października 2026",
 };
 
 /**

@@ -35,7 +35,10 @@ export default function ContactPage() {
             <li>pytania o konkretne gry, aplikacje i ustawienia kontroli rodzicielskiej,</li>
             <li>propozycje tematów, o których mamy napisać,</li>
             <li>błędy i nieaktualne informacje we wpisach (aplikacje zmieniają się szybko),</li>
-            <li>materiały i spotkania dla szkół.</li>
+            <li>
+              materiały i spotkania dla szkół (o gotowych materiałach powiadomimy osoby zapisane przez{" "}
+              <a href="/dla-szkol#zapis">formularz dla szkół</a>).
+            </li>
           </ul>
 
           <aside className="tip">

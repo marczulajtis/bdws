@@ -8,6 +8,7 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const home = { url: SITE.url, changeFrequency: "weekly" as const, priority: 1 };
   const pages = [
+    { url: `${SITE.url}/dla-szkol`, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${SITE.url}/kontakt`, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${SITE.url}/polityka-prywatnosci`, changeFrequency: "yearly" as const, priority: 0.2 },
   ];

@@ -14,7 +14,11 @@ export function slugify(text: string): string {
 }
 
 export function readingMinutes(text: string): number {
-  return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 200));
+  const plain = text
+    .split("\n")
+    .filter((l) => !/^\s*(!\[|:::|\[zrzut)/i.test(l))
+    .join(" ");
+  return Math.max(1, Math.round(plain.split(/\s+/).filter(Boolean).length / 200));
 }
 
 export function formatDate(iso: string | null | undefined): string {
