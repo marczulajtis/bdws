@@ -49,12 +49,16 @@ export async function subscribe(_: SignupState, formData: FormData): Promise<Sig
     .eq("status", "pending")
     .lt("created_at", new Date(now.getTime() - PENDING_DAYS * 86_400_000).toISOString());
 
-  const { data: existing } = await db
+  const { data: existing, error: readError } = await db
     .from("subscribers")
     .select("id,status,token,last_sent_at")
     .eq("list", LIST)
     .eq("email", email)
     .maybeSingle();
+  if (readError) {
+    console.error("[zapis] odczyt subscribers:", readError.code, readError.message);
+    return { error: "Nie udało się zapisać. Spróbuj za chwilę." };
+  }
 
   // Ta sama odpowiedź niezależnie od tego, czy adres już jest na liście (nie zdradzamy, kto się zapisał).
   if (existing?.status === "confirmed") return { ok: true, email };
@@ -69,6 +73,7 @@ export async function subscribe(_: SignupState, formData: FormData): Promise<Sig
       .from("subscribers")
       .update({ role, consent_text: consent, consent_at: now.toISOString(), last_sent_at: now.toISOString(), updated_at: now.toISOString() })
       .eq("id", existing.id);
+    if (error) console.error("[zapis] update subscribers:", error.code, error.message);
     if (error) return { error: "Nie udało się zapisać. Spróbuj za chwilę." };
     token = existing.token;
   } else {
@@ -83,6 +88,7 @@ export async function subscribe(_: SignupState, formData: FormData): Promise<Sig
       .insert({ email, list: LIST, role, consent_text: consent, consent_at: now.toISOString(), last_sent_at: now.toISOString() })
       .select("token")
       .single();
+    if (error) console.error("[zapis] insert subscribers:", error.code, error.message);
     if (error || !data) return { error: "Nie udało się zapisać. Spróbuj za chwilę." };
     token = data.token;
   }
