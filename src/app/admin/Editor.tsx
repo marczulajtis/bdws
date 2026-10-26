@@ -37,6 +37,11 @@ export function Editor({ post }: { post: Post | null }) {
   const [imgError, setImgError] = useState("");
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const imageInput = useRef<HTMLInputElement>(null);
+  /** Który przycisk kliknięto. Trzymamy to w ukrytym polu, bo nie każda przeglądarka dołącza do formularza name/value przycisku. */
+  const intentInput = useRef<HTMLInputElement>(null);
+  const setIntent = (v: "publish" | "draft" | "unpublish") => {
+    if (intentInput.current) intentInput.current.value = v;
+  };
   const galleryInput = useRef<HTMLInputElement>(null);
 
   const isPublished = post?.status === "published";
@@ -191,6 +196,7 @@ export function Editor({ post }: { post: Post | null }) {
 
         {post && <input type="hidden" name="id" value={post.id} />}
         <input type="hidden" name="cover_url" value={cover} />
+        <input ref={intentInput} type="hidden" name="intent" defaultValue="draft" />
 
         <div className="field">
           <label htmlFor="title">Tytuł</label>
@@ -311,13 +317,13 @@ export function Editor({ post }: { post: Post | null }) {
         {state.error && <p className="error" role="alert">{state.error}</p>}
 
         <div className="actions">
-          <button className="btn btn-teal" type="submit" name="intent" value="publish" disabled={pending || uploading || Boolean(imgBusy)}>
+          <button className="btn btn-teal" type="submit" onClick={() => setIntent("publish")} disabled={pending || uploading || Boolean(imgBusy)}>
             {isPublished ? "Zapisz zmiany" : "Opublikuj"} <span className="arr" />
           </button>
           {isPublished ? (
-            <button className="btn btn-line" type="submit" name="intent" value="unpublish" disabled={pending}>Cofnij do szkiców</button>
+            <button className="btn btn-line" type="submit" onClick={() => setIntent("unpublish")} disabled={pending}>Cofnij do szkiców</button>
           ) : (
-            <button className="btn btn-line" type="submit" name="intent" value="draft" disabled={pending || uploading}>Zapisz szkic</button>
+            <button className="btn btn-line" type="submit" onClick={() => setIntent("draft")} disabled={pending || uploading}>Zapisz szkic</button>
           )}
           {post && !confirmDelete && (
             <button type="button" className="btn btn-ghost" style={{ color: "var(--danger)" }} onClick={() => setConfirmDelete(true)}>Usuń</button>

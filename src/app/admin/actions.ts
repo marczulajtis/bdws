@@ -45,6 +45,7 @@ export async function savePost(_: FormState, formData: FormData): Promise<FormSt
 
   const id = String(formData.get("id") ?? "") || undefined;
   const intent = String(formData.get("intent") ?? "draft") as "draft" | "publish" | "unpublish";
+  console.log("[admin] savePost", { id: id ?? "nowy", intent });
   const title = String(formData.get("title") ?? "").trim();
   const excerpt = String(formData.get("excerpt") ?? "").trim();
   const body = String(formData.get("body") ?? "");
@@ -90,7 +91,10 @@ export async function savePost(_: FormState, formData: FormData): Promise<FormSt
     ? await supabase.from("posts").update(row).eq("id", id).select("id").single()
     : await supabase.from("posts").insert(row).select("id").single();
 
-  if (result.error) return { error: `Nie udało się zapisać: ${result.error.message}` };
+  if (result.error) {
+    console.error("[admin] savePost error", result.error);
+    return { error: `Nie udało się zapisać: ${result.error.message}` };
+  }
 
   revalidatePath("/");
   revalidatePath(`/wpis/${slug}`);
