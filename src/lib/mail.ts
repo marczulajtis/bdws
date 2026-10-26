@@ -15,11 +15,16 @@ export type Mail = {
   headers?: Record<string, string>;
 };
 
+/** MAIL_FROM bez cudzysłowów wklejonych w panelu hostingu ("Nazwa <a@b.pl>" -> Nazwa <a@b.pl>). */
+function mailFrom(): string {
+  return (process.env.MAIL_FROM ?? "").trim().replace(/^["']+|["']+$/g, "").trim();
+}
+
 export const mailConfigured = () => Boolean(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
 
 function payload(m: Mail) {
   return {
-    from: process.env.MAIL_FROM,
+    from: mailFrom(),
     to: [m.to],
     reply_to: CONTACT.email,
     subject: m.subject,
