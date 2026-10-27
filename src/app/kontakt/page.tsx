@@ -27,6 +27,14 @@ export default function ContactPage() {
               <a href={SITE.instagram} target="_blank" rel="noopener noreferrer">{SITE.handle}</a>{" "}
               (wiadomość prywatna)
             </li>
+            <li>
+              <strong>Facebook:</strong>{" "}
+              <a href={SITE.facebook} target="_blank" rel="noopener noreferrer">Bezpieczne Dzieci w Sieci</a>
+            </li>
+            <li>
+              <strong>LinkedIn:</strong>{" "}
+              <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">Bezpieczne Dzieci w Sieci</a>
+            </li>
           </ul>
           <p>Odpisujemy zwykle w ciągu kilku dni. Prowadzimy blog po pracy, więc czasem trwa to dłużej.</p>
 

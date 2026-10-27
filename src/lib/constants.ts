@@ -7,7 +7,16 @@ export const SITE = {
   audience: "Blog dla rodziców, szkół i opiekunów",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   instagram: "https://www.instagram.com/bezpieczne_dzieci_w_sieci/",
+  linkedin: "https://www.linkedin.com/company/bezpieczne-dzieci-w-sieci/",
+  facebook: "https://www.facebook.com/profile.php?id=61595356097411",
 };
+
+/** Profile w mediach społecznościowych (stopka, kontakt, sekcja „Obserwuj”). */
+export const SOCIALS = [
+  { key: "instagram", name: "Instagram", href: SITE.instagram },
+  { key: "facebook", name: "Facebook", href: SITE.facebook },
+  { key: "linkedin", name: "LinkedIn", href: SITE.linkedin },
+] as const;
 
 /**
  * Dane do stron /kontakt i /polityka-prywatnosci.

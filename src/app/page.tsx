@@ -5,6 +5,7 @@ import { PostCard } from "@/components/PostCard";
 import { SearchControls } from "@/components/SearchControls";
 import { CATEGORIES, CATEGORY_INFO, PHOTOS, SITE, ageBySlug, categoryBySlug } from "@/lib/constants";
 import { getPublishedPosts } from "@/lib/posts";
+import { SocialLinks } from "@/components/SocialLinks";
 import { slugify } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -171,6 +172,8 @@ export default async function Home({ searchParams }: { searchParams: SP }) {
             <a href={SITE.instagram} className="btn btn-teal" target="_blank" rel="noopener noreferrer">
               Obserwuj {SITE.handle} <span className="arr" />
             </a>
+            <p className="follow-more">Jesteśmy też na Facebooku i LinkedInie:</p>
+            <SocialLinks className="socials socials-labels" labels only={["facebook", "linkedin"]} />
           </div>
         </div>
       </section>

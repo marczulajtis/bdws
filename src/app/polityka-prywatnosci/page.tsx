@@ -85,9 +85,11 @@ export default function PrivacyPage() {
             Fonts ani innymi serwisami.
           </p>
           <p>
-            Link do naszego Instagrama to zwykły odnośnik, a nie wtyczka. Meta dowiaduje się o Tobie dopiero wtedy, gdy
-            w niego klikniesz. Na Instagramie obowiązuje{" "}
-            <a href="https://privacycenter.instagram.com/policy" {...ext}>polityka prywatności Instagrama</a>.
+            Linki do naszych profili na Instagramie, Facebooku i LinkedInie to zwykłe odnośniki, a nie wtyczki. Meta
+            i LinkedIn dowiadują się o Tobie dopiero wtedy, gdy w nie klikniesz. W tych serwisach obowiązują ich zasady:{" "}
+            <a href="https://privacycenter.instagram.com/policy" {...ext}>polityka prywatności Instagrama</a>,{" "}
+            <a href="https://www.facebook.com/privacy/policy/" {...ext}>polityka prywatności Facebooka</a> i{" "}
+            <a href="https://www.linkedin.com/legal/privacy-policy" {...ext}>polityka prywatności LinkedIna</a>.
           </p>
 
           <h2 id="zapisy">Zapisy na powiadomienia o materiałach dla szkół</h2>
@@ -132,7 +134,7 @@ export default function PrivacyPage() {
 
           <h2>Gdy do nas piszesz</h2>
           <p>
-            Jeśli napiszesz e-mail albo wiadomość na Instagramie, przetwarzamy Twój adres, nazwę konta i treść
+            Jeśli napiszesz e-mail albo wiadomość na Instagramie, Facebooku lub LinkedInie, przetwarzamy Twój adres, nazwę konta i treść
             wiadomości, żeby odpowiedzieć (art. 6 ust. 1 lit. f RODO). Korespondencję przechowujemy tak długo, jak to
             potrzebne do rozmowy, a potem najwyżej przez rok. Usuniemy ją wcześniej, jeśli poprosisz.
           </p>
